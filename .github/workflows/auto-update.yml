@@ -1,0 +1,32 @@
+name: Auto Update Fork
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天午夜执行一次
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  update-fork:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Fork
+        uses: actions/checkout@v2
+        with:
+          ref: main  # 替换为你要更新的分支名称
+          fetch-depth: 0
+
+      - name: Add Upstream Remote
+        run: git remote add upstream <UPSTREAM_REPO_URL>  # 替换为上游仓库的 URL
+
+      - name: Fetch Upstream
+        run: git fetch upstream
+
+      - name: Merge Upstream
+        run: git merge upstream/main  # 替换为你要合并的上游分支名称
+
+      - name: Push Changes
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git push origin main  # 替换为你要更新的分支名称    
